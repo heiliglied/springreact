@@ -62,11 +62,9 @@ function App() {
                 name: formData.email
             }),
         }).then((response) => {
-            console.log(response.json());
+            console.log(response);
+            return false;
         });
-
-        //console.log(document.getElementsByName('user_id')[0].value);
-        console.log(formData.user_id);
     }
 
     return (

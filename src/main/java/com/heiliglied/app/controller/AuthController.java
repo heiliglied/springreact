@@ -18,6 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
@@ -28,6 +29,7 @@ public class AuthController {
 
     @PostMapping("/join")
     public Map<String, Object> join(@RequestBody Map<String, Object> data) {
+        System.out.println("get");
         String password_regex = "^(?=.*[a-zA-Z])(?=.*[-_!@#$%^])[A-Za-z0-9-_!@#$%^]{8,10}$|^(?=.*[a-zA-Z])(?=.*[0-9])[A-Za-z0-9-_!@#$%^]{8,10}$|^(?=.*[0-9])(?=.*[-_!@#$%^])[A-Za-z0-9-_!@#$%^]{8,10}$";
         Pattern pattern = Pattern.compile(password_regex);
 

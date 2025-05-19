@@ -22,7 +22,9 @@ public class UserSeeder implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        seedRole();
+        if(userRepository.count() == 0) {
+            seedRole();
+        }
     }
 
     private void seedRole() {
