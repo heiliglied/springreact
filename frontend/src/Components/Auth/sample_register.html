@@ -1,0 +1,55 @@
+import './Register.css';
+
+function App() {
+    return (
+        <div className="full_body">
+            <div className="contents bg-white">
+                <div className="sign_layer">
+                    <div className="sign_form">
+                        <div className='sign_input'>
+                            <div class="md:flex md:items-center mb-6">
+                                <span className="sign_title">회 원 가 입</span>
+                                <input type="hidden" name="enable_id"/>
+                                <div className="mb-4">
+                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="user_id">사용자ID </label>
+                                    <div className="input-group">
+                                        <input type="email" name="user_id" id="user_id" className="form-control" required/>
+                                        <div className="input-group-prepend">
+                                            <button type="button" className="btn btn-info">ID 중복체크</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div style={{color: 'red'}} id="id_checker">
+                                    
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="password">비밀번호 </label>
+                                    <input type="password" name="password" id="password" required pattern="(?=^.{8,}$)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).*$"/>
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="password_confirmation">비밀번호확인 </label>
+                                    <input type="password" name="password_confirmation" id="password_confirmation" className="form-control" required pattern="(?=^.{8,}$)(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9]).*$"/>
+                                    <div id="password_status"></div>
+                                </div>
+                                <div className="form-group">
+                                    <label htmlFor="email">이메일 </label>
+                                    <input type="email" name="email" className="form-control" id="email" required/>
+                                    <div id="email_status"></div>
+                                </div>
+                                <div className="form-group" id="error_message">
+                                    
+                                </div>
+                                <span className="sign_btn">
+                                    <button type="button" className="btn btn-primary">등록</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="sign_addon"></div>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+export default App;

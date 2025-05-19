@@ -1,0 +1,64 @@
+.full_body {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.material {
+	position: relative;
+	width: 100%;
+	height: calc(100% - 55px);
+	margin-top: 55px;
+	overflow-y: auto;
+}
+
+.sign_layer {
+	width: 100%;
+	height: 100%;
+	display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+	align-items: stretch;
+    flex-direction: row-reverse;
+	vertical-align: middle;
+}
+
+.sign_addon {
+	width: calc(100% - 480px);
+	height: 100%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    z-index: 1;
+}
+
+.sign_form {
+	width: 480px;
+	height: 100%;
+}
+
+.sign_input {
+	position: relative;
+	width: 100%;
+	height: auto;
+	background-color: white;
+	padding: 5% 3% 5% 3%;
+	top: 50%;
+	transform: translate(0, -50%);
+}
+
+.sign_title {
+	width: 100%;
+	font-size: 1.6em;
+	text-align: center;
+	display: block;
+}
+
+.sign_btn {
+	width: 100%;
+	text-align: right;
+	display: block;
+}

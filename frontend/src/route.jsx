@@ -1,0 +1,20 @@
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import App from "./Components/Index";
+import Auth from "./Components/Auth/Auth";
+import Register from "./Components/Auth/Register";
+
+const Router = () => {
+    return (
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<App/>}/>
+                <Route path="/auth" element={<Auth/>}>
+                    <Route path="register" element={<Register/>}/>
+                </Route>
+            </Routes>
+        </BrowserRouter>
+    );
+}
+
+export default Router;
