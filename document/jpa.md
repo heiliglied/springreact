@@ -11,7 +11,7 @@ implementation 'org.springframework.boot:spring-boot-starter-data-jpa:3.4.3'
 4. repository 인터페이스 생성.  
   : 
     기본적인 save, update, delete 등은 interface에 설정되어 있다.(선언하지 않아도 사용 가능)  
-    별도 사용할 메소드는 JPA 규칙에 맞춰 생성한다.  
+    별도 사용할 메소드는 JPA 규칙에 맞춰 생성한다.(findFirst~ findBy~ 등 기본적인 Entity를 이용한 조회는 자동으로 생성 됨.)    
 
 ## 참고사항  
 ※ 자동생성은 사용하지 않는다.(제약조건이 큼)

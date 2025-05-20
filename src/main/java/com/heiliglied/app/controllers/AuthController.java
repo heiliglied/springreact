@@ -36,6 +36,9 @@ public class AuthController {
 
         if(result.get("status").equals("success")) {
             Map userMap = (Map) response.get("user");
+            //쿠키 전달.(로그인 유지를 위한 쿠키 설정)
+
+            /*
             HttpSession session = request.getSession();
             session.setAttribute("user_id", userMap.get("user_id"));
             session.setAttribute("roll", userMap.get("role"));
@@ -44,7 +47,7 @@ public class AuthController {
             session.setAttribute("password_change_date", userMap.get("password_change_date"));
             session.setAttribute("created_at", userMap.get("created_at"));
             session.setAttribute("updated_at", userMap.get("updated_at"));
-
+             */
             //response.put("JSESSIONID", "");
         } else {
             response.put("JSESSIONID", "");
