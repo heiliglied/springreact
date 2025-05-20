@@ -24,8 +24,8 @@ public class User {
     @Column(name = "user_id", nullable = false, unique = true)
     private String userId;
 
-    @Column(name = "roll", nullable = false, columnDefinition = "TINYINT UNSIGNED")
-    private Integer roll;
+    @Column(name = "role", nullable = false, columnDefinition = "TINYINT UNSIGNED")
+    private Integer role;
     
     @Column(name = "name")
     private String name;

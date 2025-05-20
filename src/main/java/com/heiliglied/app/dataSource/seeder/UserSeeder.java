@@ -22,9 +22,11 @@ public class UserSeeder implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
+        /* 실행시 실행 막음.
         if(userRepository.count() == 0) {
             seedRole();
         }
+        */
     }
 
     private void seedRole() {
@@ -35,7 +37,7 @@ public class UserSeeder implements ApplicationRunner {
                     .password(passwordEncoder.encode("abcd12#$"))
                     .email("heiliglied@gmail.com")
                     .name("관리자")
-                    .roll(0)
+                    .role(0)
                     .build();
 
         userList.add(user);

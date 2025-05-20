@@ -2,7 +2,7 @@ CREATE TABLE `users` (
 	`id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 	`user_id` VARCHAR(64) NOT NULL COLLATE 'utf8mb4_unicode_ci' unique,
 	`password` VARCHAR(192) NOT NULL COLLATE 'utf8mb4_unicode_ci',
-	`roll` TINYINT(3) UNSIGNED NOT NULL,
+	`role` TINYINT(3) UNSIGNED NOT NULL,
 	`name` VARCHAR(80) NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
 	`email` VARCHAR(80) NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',
 	`email_verified_at` VARCHAR(192) NULL DEFAULT NULL COLLATE 'utf8mb4_unicode_ci',

@@ -1,9 +1,10 @@
 //import NavBar from '../Navbar';
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
 
 function App() {
-    let url = '/api/auth/join';
+    let url = '/api/auth/signUp';
 
     const [formData, setFormData] = useState(
         {
@@ -61,9 +62,32 @@ function App() {
                 email: formData.email,
                 name: formData.email
             }),
+            credentials: 'include',
         }).then((response) => {
-            console.log(response);
-            return false;
+            return response.json();
+        }).then((result) => {
+            if(result.status == "error") {
+                Swal.fire({
+                    title: '경고',
+                    text: result.msg, 
+                    icon: 'warning',
+                    confirmButtonText: '확인',
+                });
+                return false;
+            } else {
+                Swal.fire({
+                    title: '알림',
+                    text: result.msg, 
+                    icon: 'success',
+                    confirmButtonText: '확인',
+                    allowOutsideClick: false, // 바깥 클릭 금지
+                    allowEscapeKey: false // Esc 키 금지
+                }).then(result => {
+                    if(result.isConfirmed) {
+                        location.href = "/";
+                    }
+                });
+            }
         });
     }
 
@@ -125,7 +149,7 @@ function App() {
                 </div>
                 <div className='mt-4 flex items-center justify-center w-full'>
                     <div className='w-[80%] flex justify-center mt-2'>
-                        <Link className='underline text-xl text-blue-600' to="/auth/login">Login 화면으로 이동</Link>
+                        <Link className='underline text-xl text-blue-600' to="/auth/signIn">로그인 화면으로 이동</Link>
                     </div>
                 </div>
             </div>
