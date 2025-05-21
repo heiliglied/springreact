@@ -14,3 +14,4 @@
  - controller 동작 확인하기.  
  - react proxy 연결 동작 확인하기.  
  - 로그인 후 쿠키 데이터 연동.
+ - spring security에서 login 핸들러 처리하기.

@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @RestController
 @RequiredArgsConstructor
@@ -50,10 +51,9 @@ public class AuthController {
              */
             //response.put("JSESSIONID", "");
         } else {
-            response.put("JSESSIONID", "");
+            //실패시 처리.
         }
 
         return response;
     }
-
 }

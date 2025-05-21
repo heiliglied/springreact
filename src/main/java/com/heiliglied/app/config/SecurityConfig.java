@@ -5,12 +5,15 @@ import java.util.Map;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
@@ -32,7 +35,12 @@ public class SecurityConfig {
                                     .permitAll()
                                     .anyRequest()
                                     .authenticated()
-        ).csrf(csrf -> csrf.disable());
+        ).csrf(csrf -> csrf.disable()
+        ).logout(logout -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout"))
+                                .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler(HttpStatus.OK))
+                                .invalidateHttpSession(true)
+                                .deleteCookies("JSESSIONID", "remember-me")
+        );
 
         return http.build();
     }
