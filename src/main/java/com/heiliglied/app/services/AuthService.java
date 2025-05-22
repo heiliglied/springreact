@@ -1,14 +1,20 @@
 package com.heiliglied.app.services;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import com.heiliglied.app.dataSource.entity.User;
 import com.heiliglied.app.dataSource.repository.UserRepository;
 import com.heiliglied.app.extra.CustomException;
@@ -17,15 +23,20 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private AuthenticationManager authenticationManager;
+    
+    @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> signUp(Map<String, Object> data) {
         String password_regex = "^(?=.*[a-zA-Z])(?=.*[-_!@#$%^])[A-Za-z0-9-_!@#$%^]{8,10}$|^(?=.*[a-zA-Z])(?=.*[0-9])[A-Za-z0-9-_!@#$%^]{8,10}$|^(?=.*[0-9])(?=.*[-_!@#$%^])[A-Za-z0-9-_!@#$%^]{8,10}$";
         Pattern pattern = Pattern.compile(password_regex);
         Map<String, Object> response = new HashMap<>();
+        LocalDateTime now = LocalDateTime.now();
 
         try {
             if(data.get("user_id").equals("")) {
@@ -52,6 +63,9 @@ public class UserService {
                     .email((String) data.get("email"))
                     .name((String) data.get("name"))
                     .role(2)
+                    .passwordChangeDate(now.toLocalDate())
+                    .createdAt(now)
+                    .updatedAt(now)
                     .build();
 
             userRepository.save(user);
@@ -82,36 +96,36 @@ public class UserService {
     public Map<String, Object> signIn(Map<String, Object> data) {
         Map<String, Object> response = new HashMap<>();
         Optional<User> optionalUser = userRepository.findFirstByUserId((String) data.get("user_id"));
-        
+
         if(optionalUser.isPresent()) {
             User user = optionalUser.get();
             if(!passwordEncoder.matches((String) data.get("password"), user.getPassword())) {
                 response.put("status", "error");
                 response.put("msg", "ID, 또는 비밀번호를 확인 해 주세요.");
+                response.put("accessToken", "");
+                response.put("refresh-token", "");
             } else {
                 response.put("status", "success");
                 response.put("msg", "로그인 되었습니다.");
-                response.put("user", convertUserMap(user));
+
+                //spring security에서 사용할 authentication 객체 생성.
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getUserId(), data.get("password"));
+                Authentication authentication = authenticationManager.authenticate(authToken);
+
+                System.out.println(authentication);
+
+                //response.put("accessToken", "");
+                //response.put("refresh-token", "");
+
+                //System.out.println(authentication);
             }
         } else {
             response.put("status", "error");
             response.put("msg", "ID, 또는 비밀번호를 확인 해 주세요.");
+            response.put("accessToken", "");
+            response.put("refresh-token", "");
         }
 
         return response;
-    }
-    
-    private Map<String, Object> convertUserMap(User user) {
-        Map<String, Object> userMap = new HashMap<>();
-
-        userMap.put("user_id", user.getUserId());
-        userMap.put("role", user.getRole());
-        userMap.put("name", user.getName());
-        userMap.put("email", user.getEmail());
-        userMap.put("password_change_date", user.getPasswordChangeDate());
-        userMap.put("created_at", user.getCreatedAt());
-        userMap.put("updated_at", user.getUpdatedAt());
-
-        return userMap;
     }
 }

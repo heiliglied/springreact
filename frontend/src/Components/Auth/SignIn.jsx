@@ -38,32 +38,41 @@ function App() {
             }),
             credentials: 'include',
         }).then((response) => {
-            return response.json();
-        }).then((result) => {
-            console.log(result);
-            return false;
-            if(result.status == "error") {
+            if(response.status == 200) {
+                let result = response.json();
+
+                if(result.status == "error") {
+                    Swal.fire({
+                        title: '경고',
+                        text: result.msg, 
+                        icon: 'warning',
+                        confirmButtonText: '확인',
+                    });
+                    return false;
+                } else {
+                    Swal.fire({
+                        title: '알림',
+                        text: result.msg, 
+                        icon: 'success',
+                        confirmButtonText: '확인',
+                        allowOutsideClick: false, // 바깥 클릭 금지
+                        allowEscapeKey: false // Esc 키 금지
+                    }).then(result => {
+                        if(result.isConfirmed) {
+                            location.href = "/";
+                        }
+                    });
+                }
+
+            } else {
                 Swal.fire({
                     title: '경고',
-                    text: result.msg, 
+                    text: '로그인에 실패하였습니다.', 
                     icon: 'warning',
                     confirmButtonText: '확인',
                 });
                 return false;
-            } else {
-                Swal.fire({
-                    title: '알림',
-                    text: result.msg, 
-                    icon: 'success',
-                    confirmButtonText: '확인',
-                    allowOutsideClick: false, // 바깥 클릭 금지
-                    allowEscapeKey: false // Esc 키 금지
-                }).then(result => {
-                    if(result.isConfirmed) {
-                        location.href = "/";
-                    }
-                });
-            }
+            }        
         });
     }
 
