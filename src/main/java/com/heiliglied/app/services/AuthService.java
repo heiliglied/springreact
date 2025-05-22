@@ -29,8 +29,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    private AuthenticationManager authenticationManager;
-    
+    private final AuthenticationManager authenticationManager;
+
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> signUp(Map<String, Object> data) {
         String password_regex = "^(?=.*[a-zA-Z])(?=.*[-_!@#$%^])[A-Za-z0-9-_!@#$%^]{8,10}$|^(?=.*[a-zA-Z])(?=.*[0-9])[A-Za-z0-9-_!@#$%^]{8,10}$|^(?=.*[0-9])(?=.*[-_!@#$%^])[A-Za-z0-9-_!@#$%^]{8,10}$";
@@ -112,7 +112,7 @@ public class AuthService {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getUserId(), data.get("password"));
                 Authentication authentication = authenticationManager.authenticate(authToken);
 
-                System.out.println(authentication);
+                //SecurityContextHolder 설정 및 JWT 토큰 생성.
 
                 //response.put("accessToken", "");
                 //response.put("refresh-token", "");
