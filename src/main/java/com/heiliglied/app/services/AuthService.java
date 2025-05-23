@@ -12,13 +12,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.heiliglied.app.dataSource.entity.User;
 import com.heiliglied.app.dataSource.repository.UserRepository;
 import com.heiliglied.app.extra.CustomException;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -93,7 +97,7 @@ public class AuthService {
         }
     }
 
-    public Map<String, Object> signIn(Map<String, Object> data) {
+    public Map<String, Object> signIn(Map<String, Object> data, HttpServletRequest request) {
         Map<String, Object> response = new HashMap<>();
         Optional<User> optionalUser = userRepository.findFirstByUserId((String) data.get("user_id"));
 
@@ -111,6 +115,18 @@ public class AuthService {
                 //spring security에서 사용할 authentication 객체 생성.
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getUserId(), data.get("password"));
                 Authentication authentication = authenticationManager.authenticate(authToken);
+
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                //authentication.setDetail
+                System.out.println(authentication);
+
+                if(authentication.isAuthenticated()) {
+                    System.out.println("true");
+                } else {
+                    System.out.println("false");
+                }
 
                 //SecurityContextHolder 설정 및 JWT 토큰 생성.
 

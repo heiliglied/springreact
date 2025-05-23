@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.heiliglied.app.services.AuthService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
@@ -24,7 +25,7 @@ public class AuthController {
     }
 
     @PostMapping("/signIn")
-    public Map<String, Object> signIn(@RequestBody Map<String, Object> data) {
-        return authService.signIn(data);
+    public Map<String, Object> signIn(@RequestBody Map<String, Object> data, HttpServletRequest request) {
+        return authService.signIn(data, request);
     }
 }
