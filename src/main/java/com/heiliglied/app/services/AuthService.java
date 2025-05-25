@@ -13,14 +13,18 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.heiliglied.app.dataSource.entity.CustomUserDetails;
 import com.heiliglied.app.dataSource.entity.User;
 import com.heiliglied.app.dataSource.repository.UserRepository;
 import com.heiliglied.app.extra.CustomException;
+import com.heiliglied.app.jwt.JwtTokenProvider;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -31,9 +35,13 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Autowired
     private final AuthenticationManager authenticationManager;
+
+    @Autowired
+    private final CustomUserDetailsService customUserDetailsService;
 
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> signUp(Map<String, Object> data) {
@@ -114,26 +122,24 @@ public class AuthService {
 
                 //spring security에서 사용할 authentication 객체 생성.
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getUserId(), data.get("password"));
+
+                WebAuthenticationDetails details = new WebAuthenticationDetailsSource().buildDetails(request);
+                authToken.setDetails(details);
+                // 인증 실행
                 Authentication authentication = authenticationManager.authenticate(authToken);
 
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
-
-                //authentication.setDetail
-                System.out.println(authentication);
+                // SecurityContext에 설정
+                SecurityContextHolder.getContext().setAuthentication(authentication);
 
                 if(authentication.isAuthenticated()) {
-                    System.out.println("true");
+                    response.put("status", "success");
+                    response.put("msg", "로그인 되었습니다.");
+                    response.put("accessToken", jwtTokenProvider.createAccessToken(authentication));
+                    response.put("refresh-token", jwtTokenProvider.createRefreshToken(authentication));
                 } else {
-                    System.out.println("false");
+                    response.put("accessToken", "");
+                    response.put("refresh-token", "");
                 }
-
-                //SecurityContextHolder 설정 및 JWT 토큰 생성.
-
-                //response.put("accessToken", "");
-                //response.put("refresh-token", "");
-
-                //System.out.println(authentication);
             }
         } else {
             response.put("status", "error");
@@ -144,4 +150,10 @@ public class AuthService {
 
         return response;
     }
+
+    /*
+    public Map<String, Object> refresh() {
+
+    }
+     */
 }
