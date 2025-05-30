@@ -8,19 +8,16 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.heiliglied.app.dataSource.entity.CustomUserDetails;
 import com.heiliglied.app.dataSource.entity.User;
 import com.heiliglied.app.dataSource.repository.UserRepository;
 import com.heiliglied.app.extra.CustomException;
@@ -36,12 +33,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
-
-    @Autowired
     private final AuthenticationManager authenticationManager;
-
-    @Autowired
-    private final CustomUserDetailsService customUserDetailsService;
 
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> signUp(Map<String, Object> data) {
@@ -136,9 +128,6 @@ public class AuthService {
                     response.put("msg", "로그인 되었습니다.");
                     response.put("accessToken", jwtTokenProvider.createAccessToken(authentication));
                     response.put("refresh-token", jwtTokenProvider.createRefreshToken(authentication));
-                } else {
-                    response.put("accessToken", "");
-                    response.put("refresh-token", "");
                 }
             }
         } else {

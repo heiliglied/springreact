@@ -18,10 +18,8 @@ import lombok.RequiredArgsConstructor;
 @Component
 public class JwtTokenProvider {
 
-    @Value("{${jwt.secret}}")
-    private String secretKeyString;
-    @Value("{${jwt.refresh}}")
-    private String refreshKeyString;
+    private String secretKeyString = "1P3StbeTCYpuFXhgmmTvErjWXkJU4XiRG2kGbMi4AHGeZrpV5riFQzHAh02crDKBvqKyjSVvGk7fbinCJi99RxzXGW";
+    private String refreshKeyString = "tV3PVxJ3Yvizyk8nJpZtUu96A1vpzuCHkvZgY7DzarXQJ9AMJE6xpVLVdYURqHenFuec2cCy5BASuWq7YFZjc1QzeN";
     private final long accessTokenValidTime = 60 * 60 * 1000L; // 1시간
     private final long refreshTokenValidTime = 60 * 60 * 24 * 14 * 1000L; // 14일
 
