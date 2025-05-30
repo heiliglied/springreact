@@ -15,7 +15,8 @@
  - react proxy 연결 동작 확인하기.  
  - 로그인 후 쿠키 데이터 연동.
  - spring security에서 login 핸들러 처리하기.
- - 발급받은 토큰 react에서 localStorage에 저장하기.
+ - env 파일 사용법 익히기. 민감한 정보 숨기는 방법.
+ - 발급받은 토큰 및 claims 정보 react에서 localStorage에 저장하기.
  
 3. interceptor 기능 만들기.
  - spring security에 addFilterBefore를 추가해서 페이지 이동시 인증 사전 처리하기.
