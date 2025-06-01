@@ -2,6 +2,9 @@ package com.heiliglied.app.jwt;
 
 import java.util.Base64;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -12,19 +15,32 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Component
 public class JwtTokenProvider {
 
-    private String secretKeyString = "1P3StbeTCYpuFXhgmmTvErjWXkJU4XiRG2kGbMi4AHGeZrpV5riFQzHAh02crDKBvqKyjSVvGk7fbinCJi99RxzXGW";
-    private String refreshKeyString = "tV3PVxJ3Yvizyk8nJpZtUu96A1vpzuCHkvZgY7DzarXQJ9AMJE6xpVLVdYURqHenFuec2cCy5BASuWq7YFZjc1QzeN";
+    @Value("${jwt.secret}")
+    private String secretKeyString;
+
+    @Value("${jwt.refresh}")
+    private String refreshKeyString;
+
+    private SecretKey secretKey; // final 키워드 제거
+    private SecretKey refreshKey; // final 키워드 제거
+
     private final long accessTokenValidTime = 60 * 60 * 1000L; // 1시간
     private final long refreshTokenValidTime = 60 * 60 * 24 * 14 * 1000L; // 14일
 
-    private final SecretKey secretKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKeyString));
-    private final SecretKey refreshKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(refreshKeyString));
+    // 의존성 주입이 완료된 후 실행되는 초기화 메서드
+    @PostConstruct
+    public void init() {
+        // Base64 디코딩 및 SecretKey 생성은 @Value 값이 주입된 후에 수행
+        this.secretKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(secretKeyString));
+        this.refreshKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(refreshKeyString));
+    }
 
     // Access Token 생성
     public String createAccessToken(Authentication authentication) {
@@ -41,7 +57,8 @@ public class JwtTokenProvider {
     private String createToken(CustomUserDetails userDetails, String type) {
         Date date = new Date();
 
-        Claims claims = Jwts.claims().build();
+        //Claims claims = Jwts.claims().build();
+        Map<String, Object> claims = new HashMap<>();
         claims.put("user_id", userDetails.getUsername());
         claims.put("name", userDetails.getName());
         claims.put("email", userDetails.getEmail());

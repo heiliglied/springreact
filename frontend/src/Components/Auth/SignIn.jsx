@@ -20,7 +20,9 @@ function App() {
         }
     }
 
-    function signIn() {
+    function signIn(event) {
+        event.preventDefault();
+
         const password_regex = /^(?=.*[a-zA-Z])(?=.*[-_!@#$%^])[A-Za-z0-9-_!@#$%^]{8,10}$|^(?=.*[a-zA-Z])(?=.*[0-9])[A-Za-z0-9-_!@#$%^]{8,10}$|^(?=.*[0-9])(?=.*[-_!@#$%^])[A-Za-z0-9-_!@#$%^]{8,10}$/;
         if(!password_regex.test(password)) {
             alert('비밀번호 형식이 일치하지 않습니다.');
@@ -37,46 +39,62 @@ function App() {
                 password: password,
             }),
             credentials: 'include',
-        }).then((response) => {
-            if(response.status == 200) {
-                let result = response.json();
-
-                if(result.status == "error") {
-                    Swal.fire({
-                        title: '경고',
-                        text: result.msg, 
-                        icon: 'warning',
-                        confirmButtonText: '확인',
-                    });
-                    return false;
-                } else {
-                    Swal.fire({
-                        title: '알림',
-                        text: result.msg, 
-                        icon: 'success',
-                        confirmButtonText: '확인',
-                        allowOutsideClick: false, // 바깥 클릭 금지
-                        allowEscapeKey: false // Esc 키 금지
-                    }).then(result => {
-                        if(result.isConfirmed) {
-                            location.href = "/";
-                        }
-                    });
-                }
-
-            } else {
+        }).then((response) => 
+            response.json()
+        ).then((result) => {
+            if(result.status == "error") {
                 Swal.fire({
                     title: '경고',
-                    text: '로그인에 실패하였습니다.', 
+                    text: result.msg, 
                     icon: 'warning',
                     confirmButtonText: '확인',
                 });
                 return false;
-            }        
+            } else {
+                Swal.fire({
+                    title: '알림',
+                    text: result.msg, 
+                    icon: 'success',
+                    confirmButtonText: '확인',
+                    allowOutsideClick: false, // 바깥 클릭 금지
+                    allowEscapeKey: false // Esc 키 금지
+                }).then(check => {
+                    if(check.isConfirmed) {
+                        let accessToken = result.accessToken;
+                        
+                        const base64Payload = accessToken.split('.')[1]; // 페이로드 부분 가져오기
+                        const jsonPayload = JSON.parse(decodeURIComponent(atob(base64Payload).split('').map(function(c) {
+                            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                        }).join('')));
+
+                        //로컬 스토리지에 토큰 값 집어넣음.
+                        localStorage.setItem("accessToken", accessToken);
+
+                        //인증정보는 session 스토리지에. 앱 모든 인증에 세션스토리지 체크 시킴.
+                        sessionStorage.setItem("auth_id", jsonPayload.auth_id);
+                        sessionStorage.setItem("auth_user_id", jsonPayload.user_id);
+                        sessionStorage.setItem("auth_roll", jsonPayload.roll);
+                        sessionStorage.setItem("auth_name", jsonPayload.name);
+                        sessionStorage.setItem("auth_email", jsonPayload.email);
+                        sessionStorage.setItem("auth_exp", jsonPayload.exp);
+
+                        location.href = "/";
+                    }
+                });
+            }
+        }).catch(() => {
+            Swal.fire({
+                title: '오류',
+                text: '로그인 과정에 오류가 발생하였습니다.', 
+                icon: 'error',
+                confirmButtonText: '확인',
+            });
+            return false;
         });
     }
 
     return (
+        <form name="signIn" onSubmit={signIn}>
         <div className="absolute top-0 left-0 w-full h-full overflow-y-auto flex flex-wrap justify-center items-stretch flex-row-reverse">
             <div className='container w-[480px] h-full ml-auto flex flex-col justify-center'>
                 <div className='flex items-center justify-center w-full'>
@@ -102,7 +120,7 @@ function App() {
                     <div className='w-[80%] flex'>
                         <div className='w-[40%] p-2.5 flex justify-end'></div>
                         <div className='w-[60%]'>
-                            <button type="button" onClick={signIn} id="signIn" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
+                            <button type="submit" id="signIn" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">
                                 로그인
                             </button>
                         </div>
@@ -115,6 +133,7 @@ function App() {
                 </div>
             </div>
         </div>
+        </form>
     );
 }
 
