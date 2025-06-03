@@ -51,7 +51,7 @@ public class JwtTokenProvider {
     // Refresh Token 생성
     public String createRefreshToken(Authentication authentication) {
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        return createToken(userDetails, "refresh-token");
+        return createToken(userDetails, "refreshToken");
     }
 
     private String createToken(CustomUserDetails userDetails, String type) {

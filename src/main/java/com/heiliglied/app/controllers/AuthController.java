@@ -28,4 +28,10 @@ public class AuthController {
     public Map<String, Object> signIn(@RequestBody Map<String, Object> data, HttpServletRequest request) {
         return authService.signIn(data, request);
     }
+
+    @PostMapping("/refreshToken")
+    public Map<String, Object> refreshToken(@RequestBody Map<String, Object> data, HttpServletRequest request) {
+        return authService.refreshToken(data, request);
+    }
+    
 }

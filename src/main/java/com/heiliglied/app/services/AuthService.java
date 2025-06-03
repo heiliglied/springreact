@@ -107,7 +107,7 @@ public class AuthService {
                 response.put("status", "error");
                 response.put("msg", "ID, 또는 비밀번호를 확인 해 주세요.");
                 response.put("accessToken", "");
-                response.put("refresh-token", "");
+                response.put("refreshToken", "");
             } else {
                 response.put("status", "success");
                 response.put("msg", "로그인 되었습니다.");
@@ -127,22 +127,25 @@ public class AuthService {
                     response.put("status", "success");
                     response.put("msg", "로그인 되었습니다.");
                     response.put("accessToken", jwtTokenProvider.createAccessToken(authentication));
-                    response.put("refresh-token", jwtTokenProvider.createRefreshToken(authentication));
+                    response.put("refreshToken", jwtTokenProvider.createRefreshToken(authentication));
                 }
             }
         } else {
             response.put("status", "error");
             response.put("msg", "ID, 또는 비밀번호를 확인 해 주세요.");
             response.put("accessToken", "");
-            response.put("refresh-token", "");
+            response.put("refreshToken", "");
         }
 
         return response;
     }
 
-    /*
-    public Map<String, Object> refresh() {
+    public Map<String, Object> refreshToken(Map<String, Object> data, HttpServletRequest request) {
+        Map<String, Object> response = new HashMap<>();
 
+        String refreshToken = (String) data.get("refreshToken");
+        //jwtTokenProvider.
+
+        return response;
     }
-     */
 }
