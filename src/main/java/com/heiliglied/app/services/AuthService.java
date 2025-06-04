@@ -142,9 +142,12 @@ public class AuthService {
 
     public Map<String, Object> refreshToken(Map<String, Object> data, HttpServletRequest request) {
         Map<String, Object> response = new HashMap<>();
+        Map<String, Object> decodeToken = new HashMap<>();
 
         String refreshToken = (String) data.get("refreshToken");
-        //jwtTokenProvider.
+        decodeToken = jwtTokenProvider.decodeToken(refreshToken);
+        
+        
 
         return response;
     }

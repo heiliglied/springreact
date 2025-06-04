@@ -28,8 +28,8 @@ public class JwtTokenProvider {
     @Value("${jwt.refresh}")
     private String refreshKeyString;
 
-    private SecretKey secretKey; // final 키워드 제거
-    private SecretKey refreshKey; // final 키워드 제거
+    private SecretKey secretKey;
+    private SecretKey refreshKey;
 
     private final long accessTokenValidTime = 60 * 60 * 1000L; // 1시간
     private final long refreshTokenValidTime = 60 * 60 * 24 * 14 * 1000L; // 14일
@@ -81,5 +81,43 @@ public class JwtTokenProvider {
         }
 
         return jwt.compact();
+    }
+
+    public Map<String, Object> decodeToken(String type, String token) {
+        Map<String, Object> result = new HashMap<>();
+
+        String[] tokenParts = token.split("\\.");
+        
+        if (tokenParts.length != 3) {
+            result.put("status", "error");
+            result.put("msg", "invalid token");
+            return result;
+        }
+
+        // 헤더, 페이로드, 서명 부분으로 나누기
+        String header = tokenParts[0];
+        String payload = tokenParts[1];
+        String signature = tokenParts[2];
+
+        // Base64 디코딩
+        String decodedHeader = new String(Base64.getUrlDecoder().decode(header));
+        String decodedPayload = new String(Base64.getUrlDecoder().decode(payload));
+
+        SecretKey key = (type.equals("accessToken")) ? secretKey : refreshKey;
+
+        String computedSignature = Jwts.builder()
+            .setHeader(Jwts.parser().parseClaimsJws(token).getHeader())
+            .setClaims(Jwts.parser().parseClaimsJws(token).getBody())
+            .signWith(key, SignatureAlgorithm.HS256) // 사용 중인 알고리즘에 맞게 설정
+            .compact()
+            .split("\\.")[2]; // 서명 부분만 가져오기
+
+        if (!signature.equals(computedSignature)) {
+            result.put("status", "error");
+            result.put("msg", "invalid signature");
+            return result;
+        }
+        
+        return result;
     }
 }
