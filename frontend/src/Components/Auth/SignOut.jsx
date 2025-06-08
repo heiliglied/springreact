@@ -1,6 +1,30 @@
 import Swal from "sweetalert2";
 
 function App() {
+    try {
+        localStorage.setItem("accessToken", "");
+        localStorage.setItem("refreshToken", "");
+
+        //인증정보는 session 스토리지에. 앱 모든 인증에 세션스토리지 체크 시킴.
+        sessionStorage.setItem("auth_id", "");
+        sessionStorage.setItem("auth_user_id", "");
+        sessionStorage.setItem("auth_roll", "");
+        sessionStorage.setItem("auth_name", "");
+        sessionStorage.setItem("auth_email", "");
+        sessionStorage.setItem("auth_exp", "");
+
+        location.href = "/";
+    } catch(error) {
+        Swal.fire({
+            title: '경고',
+            text: '로그아웃 하지 못했습니다.', 
+            icon: 'warning',
+            confirmButtonText: '확인',
+        });
+        return false;
+    }
+
+    /* JWT 방식이라 갔다올 필요 없음.
     let url = '/api/auth/logout';
 
     fetch(url,  {
@@ -59,6 +83,7 @@ function App() {
             return false;
         }
     });
+    */
 }
 
 export default App;

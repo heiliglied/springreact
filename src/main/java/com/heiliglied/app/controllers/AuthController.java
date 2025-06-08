@@ -30,8 +30,8 @@ public class AuthController {
     }
 
     @PostMapping("/refreshToken")
-    public Map<String, Object> refreshToken(@RequestBody Map<String, Object> data, HttpServletRequest request) {
-        return authService.refreshToken(data, request);
+    public Map<String, Object> refreshToken(@RequestBody Map<String, Object> data) {
+        return authService.refreshToken(data);
     }
     
 }

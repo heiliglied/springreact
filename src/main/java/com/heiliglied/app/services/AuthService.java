@@ -23,6 +23,7 @@ import com.heiliglied.app.dataSource.repository.UserRepository;
 import com.heiliglied.app.extra.CustomException;
 import com.heiliglied.app.jwt.JwtTokenProvider;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
@@ -140,14 +141,15 @@ public class AuthService {
         return response;
     }
 
-    public Map<String, Object> refreshToken(Map<String, Object> data, HttpServletRequest request) {
+    public Map<String, Object> refreshToken(Map<String, Object> data) {
         Map<String, Object> response = new HashMap<>();
-        Map<String, Object> decodeToken = new HashMap<>();
 
-        String refreshToken = (String) data.get("refreshToken");
-        decodeToken = jwtTokenProvider.decodeToken(refreshToken);
+        //토큰 정보 분해하기.
+        Claims claims = jwtTokenProvider.decodeToken("refreshToken", (String) data.get("refreshToken"));
+        System.out.println(claims);
         
-        
+
+        //decodeToken = JwtTokenProvider.decodeToken("refreshToken", (String) data.get("refreshToken"));
 
         return response;
     }

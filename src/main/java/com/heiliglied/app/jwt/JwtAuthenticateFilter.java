@@ -32,7 +32,7 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
             String jwt = authorization.substring(7);
 /*
             try {
-                if (jwtTokenProvider.validateToken(jwt)) { // ✅ JWT 검증
+                if (jwtTokenProvider.validateToken(jwt)) { // 
                     UserDetails userDetails = jwtTokenProvider.getUserFromToken(jwt);
                     UsernamePasswordAuthenticationToken authentication =
                             new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());

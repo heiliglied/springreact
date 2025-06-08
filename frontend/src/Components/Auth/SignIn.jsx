@@ -61,6 +61,7 @@ function App() {
                 }).then(check => {
                     if(check.isConfirmed) {
                         let accessToken = result.accessToken;
+                        let refreshToken = result.refreshToken;
                         
                         const base64Payload = accessToken.split('.')[1]; // 페이로드 부분 가져오기
                         const jsonPayload = JSON.parse(decodeURIComponent(atob(base64Payload).split('').map(function(c) {
@@ -69,6 +70,7 @@ function App() {
 
                         //로컬 스토리지에 토큰 값 집어넣음.
                         localStorage.setItem("accessToken", accessToken);
+                        localStorage.setItem("refreshToken", refreshToken);
 
                         //인증정보는 session 스토리지에. 앱 모든 인증에 세션스토리지 체크 시킴.
                         sessionStorage.setItem("auth_id", jsonPayload.auth_id);

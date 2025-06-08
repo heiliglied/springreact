@@ -7,12 +7,18 @@ import java.util.Map;
 
 import javax.crypto.SecretKey;
 
+import org.jboss.jandex.ClassInfo;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.configurationprocessor.json.JSONException;
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import com.heiliglied.app.dataSource.entity.CustomUserDetails;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtBuilder;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -67,6 +73,7 @@ public class JwtTokenProvider {
         claims.put("created_at", userDetails.getCreatedAt());
 
         JwtBuilder jwt = Jwts.builder()
+                            .subject("user infomation")
                             .claims(claims)
                             .subject(userDetails.getUsername()) // 최신 방식 적용
                             .issuedAt(date);
@@ -83,41 +90,15 @@ public class JwtTokenProvider {
         return jwt.compact();
     }
 
-    public Map<String, Object> decodeToken(String type, String token) {
-        Map<String, Object> result = new HashMap<>();
-
-        String[] tokenParts = token.split("\\.");
-        
-        if (tokenParts.length != 3) {
-            result.put("status", "error");
-            result.put("msg", "invalid token");
-            return result;
-        }
-
-        // 헤더, 페이로드, 서명 부분으로 나누기
-        String header = tokenParts[0];
-        String payload = tokenParts[1];
-        String signature = tokenParts[2];
-
-        // Base64 디코딩
-        String decodedHeader = new String(Base64.getUrlDecoder().decode(header));
-        String decodedPayload = new String(Base64.getUrlDecoder().decode(payload));
-
+    //검증 방식이 payload를 가져오는 방식으로 변경됨.
+    public Claims decodeToken(String type, String token) {
         SecretKey key = (type.equals("accessToken")) ? secretKey : refreshKey;
 
-        String computedSignature = Jwts.builder()
-            .setHeader(Jwts.parser().parseClaimsJws(token).getHeader())
-            .setClaims(Jwts.parser().parseClaimsJws(token).getBody())
-            .signWith(key, SignatureAlgorithm.HS256) // 사용 중인 알고리즘에 맞게 설정
-            .compact()
-            .split("\\.")[2]; // 서명 부분만 가져오기
-
-        if (!signature.equals(computedSignature)) {
-            result.put("status", "error");
-            result.put("msg", "invalid signature");
-            return result;
-        }
-        
-        return result;
+        Claims claims = Jwts.parser()
+                            .verifyWith(key)
+                            .build()
+                            .parseSignedClaims(token)
+                            .getPayload();
+        return claims;
     }
 }
