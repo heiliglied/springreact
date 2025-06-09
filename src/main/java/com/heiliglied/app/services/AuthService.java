@@ -12,12 +12,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.heiliglied.app.dataSource.entity.CustomUserDetails;
 import com.heiliglied.app.dataSource.entity.User;
 import com.heiliglied.app.dataSource.repository.UserRepository;
 import com.heiliglied.app.extra.CustomException;
@@ -35,6 +37,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManager authenticationManager;
+    private final CustomUserDetailsService customUserDetailsService;
 
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> signUp(Map<String, Object> data) {
@@ -143,11 +146,26 @@ public class AuthService {
 
     public Map<String, Object> refreshToken(Map<String, Object> data) {
         Map<String, Object> response = new HashMap<>();
-
-        //토큰 정보 분해하기.
-        Claims claims = jwtTokenProvider.decodeToken("refreshToken", (String) data.get("refreshToken"));
-        System.out.println(claims);
         
+        //토큰 정보 분해하기.
+        Map<String, Object> result = jwtTokenProvider.decodeToken("refreshToken", (String) data.get("refreshToken"));
+
+        response.put("status", result.get("status"));
+        
+        if(result.get("status").equals("success")) {
+            Claims claims = (Claims) result.get("claims");
+
+            //userdetails로 변환하는 방법 확인.
+            Optional<User> userDetails = userRepository.findFirstByUserId((String) claims.get("user_id"));
+            //UserDetails userDetails = customUserDetailsService.loadUserByUsername(claims.get("user_id"));
+
+
+
+            response.put("msg", "로그인 되었습니다.");
+            //response.put("accessToken", jwtTokenProvider.createAccessToken((CustomUserDetails) userDetails));
+        } else {
+            response.put("msg", "검증되지 않은 토큰입니다.");
+        }
 
         //decodeToken = JwtTokenProvider.decodeToken("refreshToken", (String) data.get("refreshToken"));
 

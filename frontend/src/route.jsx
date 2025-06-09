@@ -7,6 +7,7 @@ import Register from "./Components/Auth/Register";
 import SignIn from "./Components/Auth/SignIn";
 import SignOut from "./Components/Auth/SignOut";
 import Dashboard from "./Components/Board/Dashboard";
+import Test from './Components/Test/Test';
 
 const Router = () => {
     return (
@@ -21,6 +22,7 @@ const Router = () => {
                 <Route element={<AuthProtect />}>
                     <Route path="/dashboard" element={<Dashboard />} />
                 </Route>
+                <Route path="/test" element={<Test />} />
             </Routes>
         </BrowserRouter>
     );

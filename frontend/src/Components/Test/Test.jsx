@@ -9,7 +9,6 @@ function Test() {
         },
         body: JSON.stringify({
             refreshToken: localStorage.getItem("refreshToken"),
-            password: password,
         }),
         credentials: 'include',
     }).then((response) => 
@@ -24,6 +23,7 @@ function Test() {
             });
             return false;
         } else {
+            console.log('test?');
             console.log(result);
             /*
             Swal.fire({

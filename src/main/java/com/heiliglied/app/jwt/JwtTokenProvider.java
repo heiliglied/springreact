@@ -7,18 +7,14 @@ import java.util.Map;
 
 import javax.crypto.SecretKey;
 
-import org.jboss.jandex.ClassInfo;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import com.heiliglied.app.dataSource.entity.CustomUserDetails;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtBuilder;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -91,14 +87,27 @@ public class JwtTokenProvider {
     }
 
     //검증 방식이 payload를 가져오는 방식으로 변경됨.
-    public Claims decodeToken(String type, String token) {
+    public Map<String, Object> decodeToken(String type, String token) {
+        Map<String, Object> response = new HashMap<>();
         SecretKey key = (type.equals("accessToken")) ? secretKey : refreshKey;
 
-        Claims claims = Jwts.parser()
+        try {
+            Claims claims = Jwts.parser()
                             .verifyWith(key)
                             .build()
                             .parseSignedClaims(token)
                             .getPayload();
-        return claims;
+
+            response.put("status", "success");
+            response.put("claims", claims);
+        } catch(ExpiredJwtException e) {
+            response.put("status", "expired");
+            response.put("claims", null);
+        } catch(Exception e) {
+            response.put("status", "error");
+            response.put("claims", null);
+        }
+        
+        return response;
     }
 }
