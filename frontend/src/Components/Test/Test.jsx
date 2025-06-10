@@ -1,3 +1,5 @@
+import Swal from "sweetalert2";
+
 function Test() {
     let url = "/api/auth/refreshToken";
 

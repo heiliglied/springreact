@@ -45,14 +45,14 @@ public class JwtTokenProvider {
     }
 
     // Access Token 생성
-    public String createAccessToken(Authentication authentication) {
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+    public String createAccessToken(CustomUserDetails userDetails) {
+        //CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         return createToken(userDetails, "accessToken");
     }
 
     // Refresh Token 생성
-    public String createRefreshToken(Authentication authentication) {
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+    public String createRefreshToken(CustomUserDetails userDetails) {
+        //CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         return createToken(userDetails, "refreshToken");
     }
 
@@ -61,6 +61,7 @@ public class JwtTokenProvider {
 
         //Claims claims = Jwts.claims().build();
         Map<String, Object> claims = new HashMap<>();
+        claims.put("auth_id", userDetails.getId());
         claims.put("user_id", userDetails.getUsername());
         claims.put("name", userDetails.getName());
         claims.put("email", userDetails.getEmail());

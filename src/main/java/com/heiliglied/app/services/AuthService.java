@@ -130,8 +130,8 @@ public class AuthService {
                 if(authentication.isAuthenticated()) {
                     response.put("status", "success");
                     response.put("msg", "로그인 되었습니다.");
-                    response.put("accessToken", jwtTokenProvider.createAccessToken(authentication));
-                    response.put("refreshToken", jwtTokenProvider.createRefreshToken(authentication));
+                    response.put("accessToken", jwtTokenProvider.createAccessToken((CustomUserDetails)authentication.getPrincipal()));
+                    response.put("refreshToken", jwtTokenProvider.createRefreshToken((CustomUserDetails)authentication.getPrincipal()));
                 }
             }
         } else {
@@ -155,19 +155,12 @@ public class AuthService {
         if(result.get("status").equals("success")) {
             Claims claims = (Claims) result.get("claims");
 
-            //userdetails로 변환하는 방법 확인.
-            Optional<User> userDetails = userRepository.findFirstByUserId((String) claims.get("user_id"));
-            //UserDetails userDetails = customUserDetailsService.loadUserByUsername(claims.get("user_id"));
-
-
-
+            CustomUserDetails userDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsername((String)claims.get("user_id"));
+            response.put("accessToken", jwtTokenProvider.createAccessToken(userDetails));
             response.put("msg", "로그인 되었습니다.");
-            //response.put("accessToken", jwtTokenProvider.createAccessToken((CustomUserDetails) userDetails));
         } else {
             response.put("msg", "검증되지 않은 토큰입니다.");
         }
-
-        //decodeToken = JwtTokenProvider.decodeToken("refreshToken", (String) data.get("refreshToken"));
 
         return response;
     }
