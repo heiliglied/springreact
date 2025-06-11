@@ -1,6 +1,7 @@
 package com.heiliglied.app.jwt;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,26 +29,38 @@ public class JwtAuthenticateFilter extends OncePerRequestFilter {
 
         final String authorization = request.getHeader("Authorization");
 
+        Boolean result = false;
+        String status = "";
+
         if (authorization != null && authorization.startsWith("Bearer ")) {
             String jwt = authorization.substring(7);
-/*
-            try {
-                if (jwtTokenProvider.validateToken(jwt)) { // 
-                    UserDetails userDetails = jwtTokenProvider.getUserFromToken(jwt);
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+            Map<String, Object> token = jwtTokenProvider.decodeToken("accessToken", jwt);
+
+            if(token.get("status").equals("expire")) {
+                //refreshToken Check
+                Map<String, Object> refresh = jwtTokenProvider.decodeToken("refreshToken", request.getHeader("refreshToken"));
+
+                if(refresh.get("status").equals("success")) {
+                    result = false;
+                    status = "refresh";
                 }
-            } catch (ExpiredJwtException e) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT expired");
-                return;
-            } catch (JwtException e) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid JWT");
-                return;
+
+            } else if(token.get("status").equals("error")) {
+                result = false;
+                status = "error";
             }
-                */
+        } else {
+            result = false;
+            status = "error";
         }
 
-        filterChain.doFilter(request, response);
+        if(!result) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 에러.
+            response.setContentType("application/json; charset=UTF-8");
+            response.getWriter().write("{\"status\":\"" + status + "\",\"msg\":\"로그인 해 주세요.\"}");
+            return;
+        } else {
+            filterChain.doFilter(request, response);
+        }
     }
 }

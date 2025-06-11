@@ -59,29 +59,34 @@ public class JwtTokenProvider {
     private String createToken(CustomUserDetails userDetails, String type) {
         Date date = new Date();
 
-        //Claims claims = Jwts.claims().build();
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("auth_id", userDetails.getId());
-        claims.put("user_id", userDetails.getUsername());
-        claims.put("name", userDetails.getName());
-        claims.put("email", userDetails.getEmail());
-        claims.put("role", userDetails.getRole());
-        claims.put("password_change_date", userDetails.getPasswordChangeDate());
-        claims.put("created_at", userDetails.getCreatedAt());
-
-        JwtBuilder jwt = Jwts.builder()
-                            .subject("user infomation")
-                            .claims(claims)
-                            .subject(userDetails.getUsername()) // 최신 방식 적용
-                            .issuedAt(date);
+        JwtBuilder jwt = Jwts.builder();
 
         if(type.equals("accessToken")) {
-            jwt = jwt.signWith(secretKey)
-                    .expiration(new Date(date.getTime() + this.accessTokenValidTime));
-        } else {
-            jwt = jwt.signWith(refreshKey)
-                    .expiration(new Date(date.getTime() + this.refreshTokenValidTime));
+            Map<String, Object> claims = new HashMap<>();
+            claims.put("auth_id", userDetails.getId());
+            claims.put("user_id", userDetails.getUsername());
+            claims.put("name", userDetails.getName());
+            claims.put("email", userDetails.getEmail());
+            claims.put("role", userDetails.getRole());
+            claims.put("password_change_date", userDetails.getPasswordChangeDate());
+            claims.put("created_at", userDetails.getCreatedAt());
 
+            jwt.subject("user infomation")
+                .claims(claims)
+                .subject(userDetails.getUsername()) // 최신 방식 적용
+                .issuedAt(date)
+                .signWith(secretKey)
+                .expiration(new Date(date.getTime() + this.accessTokenValidTime));
+        } else {
+            Map<String, Object> claims = new HashMap<>();
+            claims.put("user_id", userDetails.getUsername());
+
+            jwt.subject("user infomation")
+                .claims(claims)
+                .subject(userDetails.getUsername()) // 최신 방식 적용
+                .issuedAt(date)
+                .signWith(refreshKey)
+                .expiration(new Date(date.getTime() + this.refreshTokenValidTime));
         }
 
         return jwt.compact();

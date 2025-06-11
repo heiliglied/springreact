@@ -24,6 +24,7 @@ import org.springframework.security.web.SecurityFilterChain;
 //import com.heiliglied.app.handler.auth.CustomLogoutHandler;
 //import com.heiliglied.app.jwt.JwtAuthenticateFilter;
 
+import com.heiliglied.app.jwt.JwtAuthenticateFilter;
 import com.heiliglied.app.services.CustomUserDetailsService;
 
 @Configuration
@@ -37,11 +38,10 @@ public class SecurityConfig {
     /*
     @Autowired
     private CustomLogoutHandler customLogoutHandler;
-    
+    */
 
     @Autowired
     private JwtAuthenticateFilter jwtAuthenticateFilter;
-    */
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -61,9 +61,9 @@ public class SecurityConfig {
                                     )
                                     .permitAll()
                                     .anyRequest()
-                                    .authenticated()
+                                    .authenticated() //securitycontext 등록해야 사용 가능함.
         ).csrf(csrf -> csrf.disable()
-        );//.addFilterBefore(jwtAuthenticateFilter, UsernamePasswordAuthenticationFilter.class);
+        ).addFilter(jwtAuthenticateFilter);
         /* JWT 토큰 사용할 거라 의미 없음. 세션 사용시에 확인.
         .logout(logout -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout"))
                                 .addLogoutHandler(customLogoutHandler)
