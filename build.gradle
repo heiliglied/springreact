@@ -23,39 +23,54 @@ repositories {
 	mavenCentral()
 }
 
-dependencies {
-	//default
-	implementation 'org.springframework.boot:spring-boot-starter-web'
+subprojects {
+	apply plugins: 'java'
+	apply plugins: 'io.spring.dependency-management'
 
-	//view template
-	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-	
-	//database
-	implementation 'org.mariadb.jdbc:mariadb-java-client'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.flywaydb:flyway-mysql'
+	repositories {
+		mavenCentral()
+	}
 
-	//security
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.security:spring-security-crypto'
-	
-	//lombok
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor'org.projectlombok:lombok'
-	testAnnotationProcessor'org.projectlombok:lombok'
+	dependencyManagement {
+        imports {
+            mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
+        }
+    }
 
-	//test
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	dependencies {
+		//default
+		implementation 'org.springframework.boot:spring-boot-starter-web'
 
-	//jwt
-	implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
-	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
-	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+		//view template
+		implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+		
+		//database
+		implementation 'org.mariadb.jdbc:mariadb-java-client'
+		implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+		implementation 'org.flywaydb:flyway-mysql'
 
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
-}
+		//security
+		implementation 'org.springframework.boot:spring-boot-starter-security'
+		implementation 'org.springframework.security:spring-security-crypto'
+		
+		//lombok
+		compileOnly 'org.projectlombok:lombok'
+		annotationProcessor'org.projectlombok:lombok'
+		testAnnotationProcessor'org.projectlombok:lombok'
 
-tasks.named('test') {
-	useJUnitPlatform()
+		//test
+		testImplementation 'org.springframework.boot:spring-boot-starter-test'
+		testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+		//jwt
+		implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+		runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+		runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
+
+		annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+	}
+
+	tasks.named('test') {
+		useJUnitPlatform()
+	}
 }
