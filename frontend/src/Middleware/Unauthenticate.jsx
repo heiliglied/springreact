@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
 
-const Authenticated = () => {
+const Unauthenticate = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -17,7 +17,7 @@ const Authenticated = () => {
         }
 
         authCheck();
-    });
+    }, [navigate]);
 }
 
-export default Authenticated;
+export default Unauthenticate;
