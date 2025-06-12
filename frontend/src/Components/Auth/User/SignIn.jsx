@@ -37,6 +37,7 @@ function App() {
             body: JSON.stringify({
                 user_id: user_id,
                 password: password,
+                roll: 'user',
             }),
             credentials: 'include',
         }).then((response) => 

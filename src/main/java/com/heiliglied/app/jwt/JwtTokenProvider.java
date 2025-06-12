@@ -9,7 +9,6 @@ import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
 
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import com.heiliglied.app.dataSource.entity.CustomUserDetails;
 import io.jsonwebtoken.Claims;

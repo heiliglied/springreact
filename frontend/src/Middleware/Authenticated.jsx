@@ -10,10 +10,8 @@ const Authenticated = () => {
             const accessToken = localStorage.getItem("accessToken");
 
             if(!authId || !accessToken) {
-                console.log('a');
                 return <Outlet/>;
             } else {
-                console.log('b');
                 navigate("/");
             }
         }

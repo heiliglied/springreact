@@ -12,7 +12,8 @@ function App() {
             password: '',
             re_password: '',
             email: '',
-            name: ''
+            name: '',
+            roll: 'user',
         }
     )
 

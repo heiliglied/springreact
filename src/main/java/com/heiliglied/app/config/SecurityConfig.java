@@ -61,7 +61,7 @@ public class SecurityConfig {
                                     )
                                     .permitAll()
                                     .anyRequest()
-                                    .authenticated() //securitycontext 등록해야 사용 가능함.
+                                    //.authenticated() //securitycontext 등록해야 사용 가능함. JWT기 때문에 여기선 필요 없음.
         ).csrf(csrf -> csrf.disable()
         ).addFilter(jwtAuthenticateFilter);
         /* JWT 토큰 사용할 거라 의미 없음. 세션 사용시에 확인.

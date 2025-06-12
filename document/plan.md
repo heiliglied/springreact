@@ -19,8 +19,10 @@
  - 발급받은 토큰 및 claims 정보 react에서 localStorage에 저장하기.
  
 3. interceptor 기능 만들기.
- - spring security에 addFilterBefore를 추가해서 페이지 이동시 인증 사전 처리하기.
+ - spring security에 addFilter를 추가해서 페이지 이동시 인증 사전 처리하기.
  - react에서 오류메시지 제대로 처리하도록 수정하기 
+ - shouldnotfilter로 검증하지 않을 URI 제어.
+ - jwt 토큰을 이용하므로 authentication은 사용하지 않아도 됨.
 
 4. 소셜 로그인 붙이기.
  - 비즈니스가 아닌 앱이라 네이버와 구글만 진행.
