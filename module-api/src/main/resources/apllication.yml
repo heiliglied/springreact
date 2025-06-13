@@ -1,0 +1,18 @@
+#.env 파일 사용
+spring:
+  config:
+    import: optional:file:../.env[.properties],classpath:application-db.properties
+  application:
+    name: app
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  mvc:
+    static-path-pattern: /**
+
+jwt:
+  secret: ${SECRET_KEY}
+  refresh: ${REFRESH_KEY}
+
+debug: true

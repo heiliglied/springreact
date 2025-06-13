@@ -1,8 +1,9 @@
 plugins {
-	id 'org.springframework.boot' version '3.4.5'
+	id 'org.springframework.boot' version '3.4.6'
 }
 
 dependencies {
+    implementation project(':module-common')
     //default
 	implementation 'org.springframework.boot:spring-boot-starter-web'
     //view template
