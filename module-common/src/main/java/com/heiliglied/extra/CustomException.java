@@ -1,4 +1,4 @@
-package com.heiliglied.common.extra;
+package com.heiliglied.extra;
 
 public class CustomException extends RuntimeException {
     public CustomException(String message) {

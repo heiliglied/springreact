@@ -1,4 +1,4 @@
-package com.heiliglied.common.config;
+package com.heiliglied.config;
 
 import java.util.HashMap;
 import java.util.Map;

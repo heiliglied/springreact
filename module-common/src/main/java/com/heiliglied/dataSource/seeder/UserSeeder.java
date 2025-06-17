@@ -1,4 +1,4 @@
-package com.heiliglied.common.dataSource.seeder;
+package com.heiliglied.dataSource.seeder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,8 +8,8 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.heiliglied.common.dataSource.entity.User;
-import com.heiliglied.common.dataSource.repository.UserRepository;
+import com.heiliglied.dataSource.entity.User;
+import com.heiliglied.dataSource.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 

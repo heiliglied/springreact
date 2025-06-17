@@ -1,4 +1,4 @@
-package com.heiliglied.api.controllers;
+package com.heiliglied.controllers;
 
 import java.util.Map;
 
@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.heiliglied.common.services.AuthService;
+import com.heiliglied.services.AuthService;
 
 import lombok.RequiredArgsConstructor;
 

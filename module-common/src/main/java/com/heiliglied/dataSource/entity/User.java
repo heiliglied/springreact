@@ -1,4 +1,4 @@
-package com.heiliglied.common.dataSource.entity;
+package com.heiliglied.dataSource.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

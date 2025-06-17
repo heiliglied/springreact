@@ -1,4 +1,4 @@
-package com.heiliglied.api.config;
+package com.heiliglied.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
