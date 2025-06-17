@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 public class UserSeeder implements ApplicationRunner {
 
     private final PasswordEncoder passwordEncoder;
-    private final UserRepository userRepository;
+    //private final UserRepository userRepository;
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
@@ -47,7 +47,7 @@ public class UserSeeder implements ApplicationRunner {
 
     private void createUser(List<User> user) {
         for(User i: user) {
-            userRepository.save(i);
+            //userRepository.save(i);
         }
     }
 }

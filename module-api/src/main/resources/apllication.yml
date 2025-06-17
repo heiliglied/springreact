@@ -1,7 +1,7 @@
 #.env 파일 사용
 spring:
   config:
-    import: optional:file:../.env[.properties],classpath:application-db.properties
+    import: optional:file:.env[.properties],classpath:application-db.properties
   application:
     name: app
   servlet:
