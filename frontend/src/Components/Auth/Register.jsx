@@ -84,7 +84,7 @@ function App() {
                     allowEscapeKey: false // Esc 키 금지
                 }).then(result => {
                     if(result.isConfirmed) {
-                        location.href = "/";
+                        //location.href = "/";
                     }
                 });
             }

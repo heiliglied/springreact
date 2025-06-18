@@ -4,16 +4,25 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.heiliglied.dataSource.entity.CustomUserDetails;
 import com.heiliglied.dataSource.entity.User;
 import com.heiliglied.dataSource.repository.UserRepository;
-import com.heiliglied.extra.CustomException;
+import com.heiliglied.exceptions.CustomException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,21 +42,21 @@ public class AuthService {
 
         try {
             if(data.get("user_id").equals("")) {
-                throw new CustomException("아이디를 입력해 주세요."); 
+                throw new CustomException("아이디를 입력해 주세요.", HttpStatus.BAD_REQUEST); 
             }
 
             if(data.get("password").equals("")) {
-                throw new CustomException("비밀번호를 입력 해 주세요.");
+                throw new CustomException("비밀번호를 입력 해 주세요.", HttpStatus.BAD_REQUEST);
             }
 
             Matcher matcher = pattern.matcher((String)data.get("password"));
 
             if(!matcher.matches()) {
-                throw new CustomException("비밀번호는 영문 대소문자 숫자 중 두종류 이상의 8~10자 형식입니다.");
+                throw new CustomException("비밀번호는 영문 대소문자 숫자 중 두종류 이상의 8~10자 형식입니다.", HttpStatus.BAD_REQUEST);
             }
 
             if(!data.get("password").equals(data.get("re_password"))) {
-                throw new CustomException("비밀번호가 일치하지 않습니다.");
+                throw new CustomException("비밀번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
             }
 
             User user = User.builder()
@@ -66,23 +75,63 @@ public class AuthService {
             response.put("msg", "가입 되었습니다.");
             return response;
         } catch (CustomException c) {
-            response.put("status", "error");
-            response.put("msg", c.getMessage());
-            return response;
+            throw c;
         } catch (Exception e) {
-            if (e.getCause() instanceof SQLException) {
-                SQLException sqlEx = (SQLException) e.getCause();
+            if (e.getCause() instanceof ConstraintViolationException) {
+                ConstraintViolationException sqlEx = (ConstraintViolationException) e.getCause();
                 if (sqlEx.getErrorCode() == 1062) {
-                    response.put("msg", "이미 가입된 계정입니다.");
-                } else {
-                    response.put("msg", "이미 가입된 계정입니다.");
+                    throw new CustomException("이미 가입된 계정입니다.", HttpStatus.INTERNAL_SERVER_ERROR);
                 }
             } else {
-                response.put("msg", "가입에 실패하였습니다.");
+                throw new CustomException("계정 등록에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
-            response.put("status", "error");
-            return response;
+            throw new CustomException("계정 등록에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    public Map<String, Object> signIn(Map<String, Object> data) {
+        Map<String, Object> response = new HashMap<>();
+        Optional<User> optionalUser = userRepository.findFirstByUserId((String) data.get("user_id"));
+        
+        if(optionalUser.isPresent()) {
+            User user = optionalUser.get();
+            if(!passwordEncoder.matches((String) data.get("password"), user.getPassword())) {
+                response.put("status", "error");
+                response.put("msg", "ID, 또는 비밀번호를 확인 해 주세요.");
+                response.put("accessToken", "");
+                response.put("refreshToken", "");
+            } else {
+                response.put("status", "success");
+                response.put("msg", "로그인 되었습니다.");
+
+                //spring security에서 사용할 authentication 객체 생성.
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getUserId(), data.get("password"));
+
+                //WebAuthenticationDetails details = new WebAuthenticationDetailsSource().buildDetails(request);
+                //authToken.setDetails(details);
+                // 인증 실행
+                //Authentication authentication = authenticationManager.authenticate(authToken);
+
+                // SecurityContext에 설정
+                //SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                /*
+                if(authentication.isAuthenticated()) {
+                    response.put("status", "success");
+                    response.put("msg", "로그인 되었습니다.");
+                    //response.put("accessToken", jwtTokenProvider.createAccessToken((CustomUserDetails)authentication.getPrincipal()));
+                    //response.put("refreshToken", jwtTokenProvider.createRefreshToken((CustomUserDetails)authentication.getPrincipal()));
+                }
+                */
+            }
+        } else {
+            response.put("status", "error");
+            response.put("msg", "ID, 또는 비밀번호를 확인 해 주세요.");
+            response.put("accessToken", "");
+            response.put("refreshToken", "");
+        }
+
+        return response;
     }
 }

@@ -2,16 +2,17 @@ package com.heiliglied.controllers;
 
 import java.util.Map;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.heiliglied.services.AuthService;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 @RequestMapping("/auth")
 public class AuthController {
@@ -21,5 +22,10 @@ public class AuthController {
     @PostMapping("/signUp")
     public Map<String, Object> signUp(@RequestBody Map<String, Object> data) {
         return authService.signUp(data);
+    }
+
+    @PostMapping("/signIn")
+    public Map<String, Object> signIn(@RequestBody Map<String, Object> data, HttpServletRequest request) {
+        return authService.signIn(data, request);
     }
 }
