@@ -23,7 +23,7 @@ function App({from}) {
     }
 
     async function signIn(event) {
-
+        event.preventDefault();
         const password_regex = /^(?=.*[a-zA-Z])(?=.*[-_!@#$%^])[A-Za-z0-9-_!@#$%^]{8,10}$|^(?=.*[a-zA-Z])(?=.*[0-9])[A-Za-z0-9-_!@#$%^]{8,10}$|^(?=.*[0-9])(?=.*[-_!@#$%^])[A-Za-z0-9-_!@#$%^]{8,10}$/;
         if(!password_regex.test(password)) {
             alert('비밀번호 형식이 일치하지 않습니다.');
