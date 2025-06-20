@@ -23,6 +23,7 @@ public class CustomExceptionHandler {
         Map<String, String> response = new HashMap<>();
         response.put("status", "error");
         response.put("msg", "알 수 없는 오류가 발생했습니다.");
+        System.out.println(ex.getMessage());
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }

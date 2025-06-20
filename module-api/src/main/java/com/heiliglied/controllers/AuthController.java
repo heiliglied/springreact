@@ -7,7 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.heiliglied.services.AuthService;
+import com.heiliglied.services.auth.AuthService;
+
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -25,5 +26,10 @@ public class AuthController {
     @PostMapping("/signIn")
     public Map<String, Object> signIn(@RequestBody Map<String, Object> data) {
         return authService.signIn(data);
+    }
+
+    @PostMapping("/refreshToken")
+    public Map<String, Object> refreshToken(@RequestBody Map<String, Object> data) {
+        return authService.refreshToken(data);
     }
 }

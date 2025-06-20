@@ -1,4 +1,4 @@
-package com.heiliglied.services;
+package com.heiliglied.services.auth;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -14,6 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 //import org.springframework.security.web.authentication.WebAuthenticationDetails;
 //import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ import com.heiliglied.dataSource.repository.UserRepository;
 import com.heiliglied.exceptions.CustomException;
 import com.heiliglied.jwt.JwtTokenProvider;
 
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -35,6 +37,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
+    private final CustomUserDetailsService customUserDetailsService;
     
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> signUp(Map<String, Object> data) {
@@ -110,27 +113,10 @@ public class AuthService {
 
                 //spring security에서 사용할 authentication 객체 생성.
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getUserId(), data.get("password"));
-
-                //WebAuthenticationDetails details = new WebAuthenticationDetailsSource().buildDetails(request);
-                //authToken.setDetails(details);
-
-                // 인증 실행
                 Authentication authentication = authenticationManager.authenticate(authToken);
-
                 // SecurityContext에 설정
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 
-                
-                System.out.println("===========================");
-                System.out.println(user);
-                System.out.println("===========================");
-                System.out.println(authToken);
-                System.out.println("===========================");
-                System.exit(0);
-
-                //CustomUserDetails userDetails = (CustomUserDetails)authentication.getPrincipal();
-                
-                
                 if(authentication.isAuthenticated()) {
                     response.put("status", "success");
                     response.put("msg", "로그인 되었습니다.");
@@ -143,6 +129,26 @@ public class AuthService {
             response.put("msg", "ID, 또는 비밀번호를 확인 해 주세요.");
             response.put("accessToken", "");
             response.put("refreshToken", "");
+        }
+
+        return response;
+    }
+
+    public Map<String, Object> refreshToken(Map<String, Object> data) {
+        Map<String, Object> response = new HashMap<>();
+
+        Map<String, Object> result = jwtTokenProvider.decodeToken("refreshToken", (String) data.get("refreshToken"));
+
+        response.put("status", result.get("status"));
+        
+        if(result.get("status").equals("success")) {
+            Claims claims = (Claims) result.get("claims");
+
+            CustomUserDetails userDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsername((String)claims.get("user_id"));
+            response.put("accessToken", jwtTokenProvider.createAccessToken(userDetails));
+            response.put("msg", "로그인 되었습니다.");
+        } else {
+            response.put("msg", "검증되지 않은 토큰입니다.");
         }
 
         return response;

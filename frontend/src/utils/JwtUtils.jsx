@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 
 export const decodeJwtPayload = (token) => {
     try {
-        const base64Payload = accessToken.split('.')[1]; // 페이로드 부분 가져오기
+        const base64Payload = token.split('.')[1]; // 페이로드 부분 가져오기
         const jsonPayload = JSON.parse(decodeURIComponent(atob(base64Payload).split('').map(function(c) {
             return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
         }).join('')));

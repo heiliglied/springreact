@@ -44,6 +44,7 @@ function App({from}) {
         }).then((response) => 
             response.json()
         ).then((result) => {
+            console.log(result);
             if(result.status == "error") {
                 Swal.fire({
                     title: '경고',
@@ -62,11 +63,10 @@ function App({from}) {
                     allowEscapeKey: false // Esc 키 금지
                 }).then((check) => {
                     if(check.isConfirmed) {
-                        const result = createToken(result.accessToken, result.refreshToken);
-                        if(!result) {
+                        const setToken = createToken(result.accessToken, result.refreshToken);
+                        if(!setToken) {
                             return;
                         }
-
                         location.href = "/";
                     }
                 });
