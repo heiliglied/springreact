@@ -9,14 +9,8 @@ import java.util.regex.Pattern;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
-//import org.springframework.security.web.authentication.WebAuthenticationDetails;
-//import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,7 +29,6 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomUserDetailsService customUserDetailsService;
     
@@ -86,7 +79,7 @@ public class AuthService {
             if (e.getCause() instanceof ConstraintViolationException) {
                 ConstraintViolationException sqlEx = (ConstraintViolationException) e.getCause();
                 if (sqlEx.getErrorCode() == 1062) {
-                    throw new CustomException("이미 가입된 계정입니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+                    throw new CustomException("이미 가입된 계정입니다.", HttpStatus.OK);
                 }
             } else {
                 throw new CustomException("계정 등록에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -96,42 +89,17 @@ public class AuthService {
         }
     }
 
-    public Map<String, Object> signIn(Map<String, Object> data) {
-        Map<String, Object> response = new HashMap<>();
+    public void validateUser(Map<String, Object> data) {
         Optional<User> optionalUser = userRepository.findFirstByUserId((String) data.get("user_id"));
 
         if(optionalUser.isPresent()) {
             User user = optionalUser.get();
             if(!passwordEncoder.matches((String) data.get("password"), user.getPassword())) {
-                response.put("status", "error");
-                response.put("msg", "ID, 또는 비밀번호를 확인 해 주세요.");
-                response.put("accessToken", "");
-                response.put("refreshToken", "");
-            } else {
-                response.put("status", "success");
-                response.put("msg", "로그인 되었습니다.");
-
-                //spring security에서 사용할 authentication 객체 생성.
-                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(user.getUserId(), data.get("password"));
-                Authentication authentication = authenticationManager.authenticate(authToken);
-                // SecurityContext에 설정
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-
-                if(authentication.isAuthenticated()) {
-                    response.put("status", "success");
-                    response.put("msg", "로그인 되었습니다.");
-                    response.put("accessToken", jwtTokenProvider.createAccessToken((CustomUserDetails)authentication.getPrincipal()));
-                    response.put("refreshToken", jwtTokenProvider.createRefreshToken((CustomUserDetails)authentication.getPrincipal()));
-                }
+                throw new CustomException("ID, 또는 비밀번호를 확인 해 주세요.", HttpStatus.OK);
             }
         } else {
-            response.put("status", "error");
-            response.put("msg", "ID, 또는 비밀번호를 확인 해 주세요.");
-            response.put("accessToken", "");
-            response.put("refreshToken", "");
+            throw new CustomException("대상을 찾을 수 없습니다.", HttpStatus.OK);
         }
-
-        return response;
     }
 
     public Map<String, Object> refreshToken(Map<String, Object> data) {

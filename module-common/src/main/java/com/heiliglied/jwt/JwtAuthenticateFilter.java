@@ -1,5 +1,3 @@
 package com.heiliglied.jwt;
 
-public class JwtAuthenticateFilter {
-    
-}
+import org.springframework.web.filter.OncePerRequestFilter;

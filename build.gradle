@@ -8,7 +8,7 @@ version = '0.0.1-SNAPSHOT'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
+		languageVersion = JavaLanguageVersion.of(21)
 	}
 }
 
@@ -41,6 +41,9 @@ subprojects {
 		testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 		
 		annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+
+		//default
+		implementation 'org.springframework.boot:spring-boot-starter-web'
 
 		//security
 		implementation 'org.springframework.boot:spring-boot-starter-security'

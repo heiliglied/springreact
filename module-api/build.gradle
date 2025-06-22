@@ -5,8 +5,7 @@ plugins {
 dependencies {
     //subproject
     implementation project(':module-common')
-    //default
-	implementation 'org.springframework.boot:spring-boot-starter-web'
+    
     //view template
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 }
