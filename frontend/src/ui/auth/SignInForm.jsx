@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-function SignInForm({from, user_id, password, changeInputValue, signIn}) {
+function SignInForm({from, user_id, password, changeInputValue, signIn, naver_login}) {
     return (
         <form name="signIn" onSubmit={signIn}>
         <div className="absolute top-0 left-0 w-full h-full overflow-y-auto flex flex-wrap justify-center items-stretch flex-row-reverse">
@@ -38,7 +38,7 @@ function SignInForm({from, user_id, password, changeInputValue, signIn}) {
 
                 <div className='mt-4 flex items-center justify-center w-full'>
                     <div className='w-[80%] flex justify-center mt-2'>
-                        네이버 로그인
+                        <Link to={naver_login}>네이버 로그인</Link>
                     </div>
                 </div>
 
