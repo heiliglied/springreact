@@ -1,4 +1,4 @@
-package com.heiliglied.api;
+package com.heiliglied;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;

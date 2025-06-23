@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,21 +40,21 @@ public class AuthService {
 
         try {
             if(data.get("user_id").equals("")) {
-                throw new CustomException("아이디를 입력해 주세요.", HttpStatus.BAD_REQUEST); 
+                throw new CustomException("warning", "아이디를 입력해 주세요.", HttpStatus.BAD_REQUEST); 
             }
 
             if(data.get("password").equals("")) {
-                throw new CustomException("비밀번호를 입력 해 주세요.", HttpStatus.BAD_REQUEST);
+                throw new CustomException("warning", "비밀번호를 입력 해 주세요.", HttpStatus.BAD_REQUEST);
             }
 
             Matcher matcher = pattern.matcher((String)data.get("password"));
 
             if(!matcher.matches()) {
-                throw new CustomException("비밀번호는 영문 대소문자 숫자 중 두종류 이상의 8~10자 형식입니다.", HttpStatus.BAD_REQUEST);
+                throw new CustomException("warning", "비밀번호는 영문 대소문자 숫자 중 두종류 이상의 8~10자 형식입니다.", HttpStatus.BAD_REQUEST);
             }
 
             if(!data.get("password").equals(data.get("re_password"))) {
-                throw new CustomException("비밀번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
+                throw new CustomException("warning", "비밀번호가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
             }
 
             User user = User.builder()
@@ -79,13 +78,13 @@ public class AuthService {
             if (e.getCause() instanceof ConstraintViolationException) {
                 ConstraintViolationException sqlEx = (ConstraintViolationException) e.getCause();
                 if (sqlEx.getErrorCode() == 1062) {
-                    throw new CustomException("이미 가입된 계정입니다.", HttpStatus.OK);
+                    throw new CustomException("duplicate", "이미 가입된 계정입니다.", HttpStatus.OK);
                 }
             } else {
-                throw new CustomException("계정 등록에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new CustomException("error", "계정 등록에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
             }
 
-            throw new CustomException("계정 등록에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new CustomException("error", "계정 등록에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -95,10 +94,10 @@ public class AuthService {
         if(optionalUser.isPresent()) {
             User user = optionalUser.get();
             if(!passwordEncoder.matches((String) data.get("password"), user.getPassword())) {
-                throw new CustomException("ID, 또는 비밀번호를 확인 해 주세요.", HttpStatus.OK);
+                throw new CustomException("warning", "ID, 또는 비밀번호를 확인 해 주세요.", HttpStatus.OK);
             }
         } else {
-            throw new CustomException("대상을 찾을 수 없습니다.", HttpStatus.OK);
+            throw new CustomException("warning", "대상을 찾을 수 없습니다.", HttpStatus.OK);
         }
     }
 

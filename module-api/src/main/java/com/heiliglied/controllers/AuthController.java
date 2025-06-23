@@ -52,7 +52,7 @@ public class AuthController {
 
             return response;
         } else {
-            throw new CustomException("인증에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
+            throw new CustomException("error", "인증에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

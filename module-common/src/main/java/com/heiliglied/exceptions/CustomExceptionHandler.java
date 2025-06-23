@@ -13,7 +13,7 @@ public class CustomExceptionHandler {
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<Map<String, String>> handleCustomException(CustomException ex) {
         Map<String, String> response = new HashMap<>();
-        response.put("status", "error");
+        response.put("status", ex.getStatus());
         response.put("msg", ex.getMessage());
          return ResponseEntity.status(ex.getHttpStatus()).body(response);
     }

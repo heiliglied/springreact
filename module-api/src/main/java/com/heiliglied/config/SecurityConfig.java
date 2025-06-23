@@ -23,6 +23,9 @@ import com.heiliglied.services.auth.CustomUserDetailsService;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    @Autowired
+    private JwtAuthenticateFilter jwtAuthenticateFilter;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.authorizeHttpRequests((authorizeHttpRequests) ->
@@ -36,7 +39,7 @@ public class SecurityConfig {
                                     .permitAll()
                                     //.authenticated() //securitycontext 등록해야 사용 가능함. JWT기 때문에 여기선 필요 없음.
         ).csrf(csrf -> csrf.disable()
-        );//.addFilter(jwtAuthenticateFilter);
+        ).addFilter(jwtAuthenticateFilter);
         /* JWT 토큰 사용할 거라 의미 없음. 세션 사용시에 확인.
         .logout(logout -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout"))
                                 .addLogoutHandler(customLogoutHandler)

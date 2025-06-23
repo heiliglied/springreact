@@ -35,6 +35,13 @@ function SignInForm({from, user_id, password, changeInputValue, signIn}) {
                         </div>
                     </div>
                 </div>
+
+                <div className='mt-4 flex items-center justify-center w-full'>
+                    <div className='w-[80%] flex justify-center mt-2'>
+                        네이버 로그인
+                    </div>
+                </div>
+
                 {from === "user" && 
                 (
                 <div className='mt-4 flex items-center justify-center w-full'>
