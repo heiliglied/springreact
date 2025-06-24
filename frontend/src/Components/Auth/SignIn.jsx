@@ -15,8 +15,8 @@ function App({from}) {
     }
 
     //env 사용할 수 있게 세팅 해야함.
-    const naver_client_id = process.env.NAVER_CLIENT_ID;
-    const naver_login = "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=" + naver_client_id +"&state=" + state + "&redirect_uri=" + process.env.APP_DOMAIN + process.env.NAVER_CALLBACK_URI;
+    const naver_client_id = import.meta.env.VITE_NAVER_CLIENT_ID;
+    const naver_login = "https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=" + naver_client_id +"&state=" + state + "&redirect_uri=" + import.meta.env.VITE_APP_DOMAIN + import.meta.env.VITE_NAVER_CALLBACK_URI;
 
     const [user_id, setUserId] = useState('');
     const [password, setPassword] = useState('');

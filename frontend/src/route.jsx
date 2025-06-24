@@ -5,6 +5,8 @@ import Register from "./components/auth/Register";
 import SignIn from "./components/auth/SignIn";
 import SignOut from "./components/auth/SignOut";
 import Unauthenticate from "./middleware/Unauthenticate";
+import Sns from "./components/sns/Sns";
+import Naver from "./components/sns/Naver";
 
 const Router = () => {
     return (
@@ -19,7 +21,11 @@ const Router = () => {
                     </Route>
                 </Route>
                 {/* 인증이 필요한 router */}
-                
+
+                {/* 소셜 로그인 라우터 */}
+                <Route path="/sns" element={<Sns/>}>
+                    <Route path="naver" element={<Naver/>}/>
+                </Route>
 
                 <Route path="/admin">
                     <Route path="auth" element={<Auth/>}>
