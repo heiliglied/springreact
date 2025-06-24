@@ -1,5 +1,4 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import { Link } from "react-router";
 
 function SignInForm({from, user_id, password, changeInputValue, signIn, naver_login}) {
     return (

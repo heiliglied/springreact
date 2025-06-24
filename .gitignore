@@ -39,3 +39,4 @@ out/
 
 ### Node modules ###
 frontend/node_modules/
+frontend-react-native/node_modules/

@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router";
 import { decodeJwtPayload, refreshToken } from "@/Components/Auth/JwtUtils";
 
 const AuthProtect = () => {

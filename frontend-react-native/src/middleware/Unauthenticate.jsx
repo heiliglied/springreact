@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate, Outlet } from "react-router-dom";
+import { useNavigate, Outlet } from "react-router";
 
 const Unauthenticate = () => {
     const navigate = useNavigate();
