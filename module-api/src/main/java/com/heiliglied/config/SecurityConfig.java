@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.heiliglied.services.auth.CustomUserDetailsService;
 
@@ -39,7 +40,8 @@ public class SecurityConfig {
                                     .permitAll()
                                     //.authenticated() //securitycontext 등록해야 사용 가능함. JWT기 때문에 여기선 필요 없음.
         ).csrf(csrf -> csrf.disable()
-        ).addFilter(jwtAuthenticateFilter);
+        ).addFilterBefore(jwtAuthenticateFilter,
+                UsernamePasswordAuthenticationFilter.class);
         /* JWT 토큰 사용할 거라 의미 없음. 세션 사용시에 확인.
         .logout(logout -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/auth/logout"))
                                 .addLogoutHandler(customLogoutHandler)
