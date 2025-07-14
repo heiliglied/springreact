@@ -135,7 +135,6 @@ public class AuthService {
         
         if(result.get("status").equals("success")) {
             Claims claims = (Claims) result.get("claims");
-
             CustomUserDetails userDetails = (CustomUserDetails) customUserDetailsService.loadUserByUsername((String)claims.get("user_id"));
             response.put("accessToken", jwtTokenProvider.createAccessToken(userDetails));
             response.put("msg", "로그인 되었습니다.");
