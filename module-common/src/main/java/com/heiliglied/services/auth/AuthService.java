@@ -9,6 +9,10 @@ import java.util.regex.Pattern;
 
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +34,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomUserDetailsService customUserDetailsService;
+    private final AuthenticationManager authenticationManager;
     
     @Transactional(rollbackFor = Exception.class)
     public Map<String, Object> signUp(Map<String, Object> data) {
@@ -98,6 +103,26 @@ public class AuthService {
             }
         } else {
             throw new CustomException("warning", "대상을 찾을 수 없습니다.", HttpStatus.OK);
+        }
+    }
+
+    public Map<String, String> authenticate(Map<String, Object> data) {
+        Map<String, String> response = new HashMap<>();
+
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(data.get("user_id"), data.get("password"));
+        Authentication authentication = authenticationManager.authenticate(authToken);
+
+        if(authentication.isAuthenticated()) {
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            response.put("status", "success");
+            response.put("msg", "로그인 되었습니다.");
+            response.put("accessToken", jwtTokenProvider.createAccessToken((CustomUserDetails)authentication.getPrincipal()));
+            response.put("refreshToken", jwtTokenProvider.createRefreshToken((CustomUserDetails)authentication.getPrincipal()));
+
+            return response;
+        } else {
+            throw new CustomException("error", "인증에 실패하였습니다.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
